@@ -1,39 +1,46 @@
 import { FastifyInstance } from 'fastify'
 
-interface Transaction {
+// Interface para Categoria
+interface Categoria {
   id: number
-  title: string
-  amount: number
+  nome: string
 }
 
-let transactions: Transaction[] = []
-let nextId = 1
+// Lista em memória para armazenar categorias
+let categorias: Categoria[] = []
+let proximoIdCategoria = 1
 
-export default async function transactionsRoutes(app: FastifyInstance) {
-  app.get('/', async () => transactions)
+export default async function rotasCategorias(app: FastifyInstance) {
+  // Retorna todas as categorias cadastradas
+  app.get('/', async () => categorias)
 
+  // Cria uma nova categoria e adiciona à lista
   app.post('/', async (request, reply) => {
-    const { title, amount } = request.body as { title: string; amount: number }
-    const newTransaction = { id: nextId++, title, amount }
-    transactions.push(newTransaction)
-    return newTransaction
+    const { nome } = request.body as { nome: string }
+    const novaCategoria = { id: proximoIdCategoria++, nome }
+    categorias.push(novaCategoria)
+    return novaCategoria
   })
 
+  // Atualiza dados de uma categoria específica pelo id
   app.patch('/:id', async (request, reply) => {
     const id = Number((request.params as any).id)
-    const transaction = transactions.find(t => t.id === id)
-    if (!transaction) return reply.code(404).send({ message: 'Transaction não encontrada' })
+    const categoria = categorias.find(c => c.id === id)
 
-    const { title, amount } = request.body as { title?: string; amount?: number }
-    if (title) transaction.title = title
-    if (amount) transaction.amount = amount
+    if (!categoria) {
+      return reply.status(404).send({ mensagem: 'Categoria não encontrada' })
+    }
 
-    return transaction
+    const { nome } = request.body as { nome?: string }
+    if (nome !== undefined) categoria.nome = nome
+
+    return categoria
   })
 
+  // Remove uma categoria pelo id
   app.delete('/:id', async (request, reply) => {
     const id = Number((request.params as any).id)
-    transactions = transactions.filter(t => t.id !== id)
-    return { message: 'Transaction deletada' }
+    categorias = categorias.filter(c => c.id !== id)
+    return { mensagem: 'Categoria deletada' }
   })
 }

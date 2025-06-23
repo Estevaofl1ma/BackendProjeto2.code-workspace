@@ -1,68 +1,46 @@
 import { FastifyInstance } from 'fastify'
 
-type Category = {
+// Interface para Categoria
+interface Categoria {
   id: number
-  name: string
-  description?: string
+  nome: string
 }
 
-const categories: Category[] = []
+// Lista em memória para armazenar categorias
+let categorias: Categoria[] = []
+let proximoIdCategoria = 1
 
-async function categoriesRoutes(app: FastifyInstance) {
-  // GET - Listar todas as categorias
-  app.get('/', async (request, reply) => {
-    return categories
-  })
+export default async function rotasCategorias(app: FastifyInstance) {
+  // Retorna todas as categorias cadastradas
+  app.get('/', async () => categorias)
 
-  // POST - Criar nova categoria
+  // Cria uma nova categoria e adiciona à lista
   app.post('/', async (request, reply) => {
-    const { name, description } = request.body as { name: string; description?: string }
-
-    const newCategory: Category = {
-      id: categories.length + 1,
-      name,
-      description,
-    }
-
-    categories.push(newCategory)
-
-    return newCategory
+    const { nome } = request.body as { nome: string }
+    const novaCategoria = { id: proximoIdCategoria++, nome }
+    categorias.push(novaCategoria)
+    return novaCategoria
   })
 
-  // PATCH - Atualizar uma categoria
+  // Atualiza dados de uma categoria específica pelo id
   app.patch('/:id', async (request, reply) => {
-    const { id } = request.params as { id: string }
-    const idNumber = Number(id)
+    const id = Number((request.params as any).id)
+    const categoria = categorias.find(c => c.id === id)
 
-    const { name, description } = request.body as Partial<Category>
-
-    const category = categories.find((c) => c.id === idNumber)
-
-    if (!category) {
-      return reply.status(404).send({ message: 'Categoria não encontrada' })
+    if (!categoria) {
+      return reply.status(404).send({ mensagem: 'Categoria não encontrada' })
     }
 
-    if (name !== undefined) category.name = name
-    if (description !== undefined) category.description = description
+    const { nome } = request.body as { nome?: string }
+    if (nome !== undefined) categoria.nome = nome
 
-    return category
+    return categoria
   })
 
-  // DELETE - Remover uma categoria
+  // Remove uma categoria pelo id
   app.delete('/:id', async (request, reply) => {
-    const { id } = request.params as { id: string }
-    const idNumber = Number(id)
-
-    const index = categories.findIndex((c) => c.id === idNumber)
-
-    if (index === -1) {
-      return reply.status(404).send({ message: 'Categoria não encontrada' })
-    }
-
-    categories.splice(index, 1)
-
-    return { message: 'Categoria deletada' }
+    const id = Number((request.params as any).id)
+    categorias = categorias.filter(c => c.id !== id)
+    return { mensagem: 'Categoria deletada' }
   })
 }
-
-export default categoriesRoutes

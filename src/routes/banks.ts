@@ -1,68 +1,46 @@
 import { FastifyInstance } from 'fastify'
 
-type Bank = {
+// Interface para Banco
+interface Banco {
   id: number
-  name: string
-  branch: string
+  nome: string
 }
 
-const banks: Bank[] = []
+// Lista em memória para armazenar bancos
+let bancos: Banco[] = []
+let proximoIdBanco = 1
 
-async function banksRoutes(app: FastifyInstance) {
-  // GET - Listar todos os bancos
-  app.get('/', async (request, reply) => {
-    return banks
-  })
+export default async function rotasBancos(app: FastifyInstance) {
+  // Retorna todos os bancos cadastrados
+  app.get('/', async () => bancos)
 
-  // POST - Criar novo banco
+  // Cria um novo banco e adiciona à lista
   app.post('/', async (request, reply) => {
-    const { name, branch } = request.body as { name: string; branch: string }
-
-    const newBank: Bank = {
-      id: banks.length + 1,
-      name,
-      branch,
-    }
-
-    banks.push(newBank)
-
-    return newBank
+    const { nome } = request.body as { nome: string }
+    const novoBanco = { id: proximoIdBanco++, nome }
+    bancos.push(novoBanco)
+    return novoBanco
   })
 
-  // PATCH - Atualizar um banco
+  // Atualiza dados de um banco específico pelo id
   app.patch('/:id', async (request, reply) => {
-    const { id } = request.params as { id: string }
-    const idNumber = Number(id)
+    const id = Number((request.params as any).id)
+    const banco = bancos.find(b => b.id === id)
 
-    const { name, branch } = request.body as Partial<Bank>
-
-    const bank = banks.find((b) => b.id === idNumber)
-
-    if (!bank) {
-      return reply.status(404).send({ message: 'Bank não encotrada' })
+    if (!banco) {
+      return reply.status(404).send({ mensagem: 'Banco não encontrado' })
     }
 
-    if (name !== undefined) bank.name = name
-    if (branch !== undefined) bank.branch = branch
+    const { nome } = request.body as { nome?: string }
+    if (nome !== undefined) banco.nome = nome
 
-    return bank
+    return banco
   })
 
-  // DELETE - Remover um banco
+  // Remove um banco pelo id
   app.delete('/:id', async (request, reply) => {
-    const { id } = request.params as { id: string }
-    const idNumber = Number(id)
-
-    const index = banks.findIndex((b) => b.id === idNumber)
-
-    if (index === -1) {
-      return reply.status(404).send({ message: 'Bank não encotrada' })
-    }
-
-    banks.splice(index, 1)
-
-    return { message: 'Bank deletada' }
+    const id = Number((request.params as any).id)
+    bancos = bancos.filter(b => b.id !== id)
+    return { mensagem: 'Banco deletado' }
   })
 }
-
-export default banksRoutes
