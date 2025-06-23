@@ -22,7 +22,7 @@ export default async function transactionsRoutes(app: FastifyInstance) {
   app.patch('/:id', async (request, reply) => {
     const id = Number((request.params as any).id)
     const transaction = transactions.find(t => t.id === id)
-    if (!transaction) return reply.code(404).send({ message: 'Transaction not found' })
+    if (!transaction) return reply.code(404).send({ message: 'Transaction não encontrada' })
 
     const { title, amount } = request.body as { title?: string; amount?: number }
     if (title) transaction.title = title
@@ -34,6 +34,6 @@ export default async function transactionsRoutes(app: FastifyInstance) {
   app.delete('/:id', async (request, reply) => {
     const id = Number((request.params as any).id)
     transactions = transactions.filter(t => t.id !== id)
-    return { message: 'Transaction deleted' }
+    return { message: 'Transaction deletada' }
   })
 }

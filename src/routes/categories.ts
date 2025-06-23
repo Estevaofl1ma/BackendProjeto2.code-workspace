@@ -39,7 +39,7 @@ async function categoriesRoutes(app: FastifyInstance) {
     const category = categories.find((c) => c.id === idNumber)
 
     if (!category) {
-      return reply.status(404).send({ message: 'Category not found' })
+      return reply.status(404).send({ message: 'Categoria não encontrada' })
     }
 
     if (name !== undefined) category.name = name
@@ -56,12 +56,12 @@ async function categoriesRoutes(app: FastifyInstance) {
     const index = categories.findIndex((c) => c.id === idNumber)
 
     if (index === -1) {
-      return reply.status(404).send({ message: 'Category not found' })
+      return reply.status(404).send({ message: 'Categoria não encontrada' })
     }
 
     categories.splice(index, 1)
 
-    return { message: 'Category deleted' }
+    return { message: 'Categoria deletada' }
   })
 }
 

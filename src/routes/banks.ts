@@ -39,7 +39,7 @@ async function banksRoutes(app: FastifyInstance) {
     const bank = banks.find((b) => b.id === idNumber)
 
     if (!bank) {
-      return reply.status(404).send({ message: 'Bank not found' })
+      return reply.status(404).send({ message: 'Bank não encotrada' })
     }
 
     if (name !== undefined) bank.name = name
@@ -56,12 +56,12 @@ async function banksRoutes(app: FastifyInstance) {
     const index = banks.findIndex((b) => b.id === idNumber)
 
     if (index === -1) {
-      return reply.status(404).send({ message: 'Bank not found' })
+      return reply.status(404).send({ message: 'Bank não encotrada' })
     }
 
     banks.splice(index, 1)
 
-    return { message: 'Bank deleted' }
+    return { message: 'Bank deletada' }
   })
 }
 
