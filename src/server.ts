@@ -15,5 +15,5 @@ app.get('/', async (request, reply) => {
 })
 
 app.listen({ port: 3333 }).then(() => {
-  console.log('🚀 Servidor rodando em http://localhost:3333')
+  console.log('Servidor rodando em http://localhost:3333')
 })
