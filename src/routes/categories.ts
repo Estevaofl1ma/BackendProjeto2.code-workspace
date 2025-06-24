@@ -1,46 +1,29 @@
 import { FastifyInstance } from 'fastify'
+import { CategoriaMemoryRepository } from '../repositories/CategoriaMemoryRepository'
 
-// Interface para Categoria
-interface Categoria {
-  id: number
-  nome: string
-}
-
-// Lista em memória para armazenar categorias
-let categorias: Categoria[] = []
-let proximoIdCategoria = 1
+const repositorio = new CategoriaMemoryRepository()
 
 export default async function rotasCategorias(app: FastifyInstance) {
-  // Retorna todas as categorias cadastradas
-  app.get('/', async () => categorias)
+  app.get('/', async () => repositorio.listar())
 
-  // Cria uma nova categoria e adiciona à lista
   app.post('/', async (request, reply) => {
     const { nome } = request.body as { nome: string }
-    const novaCategoria = { id: proximoIdCategoria++, nome }
-    categorias.push(novaCategoria)
-    return novaCategoria
+    const nova = repositorio.criar(nome)
+    return nova
   })
 
-  // Atualiza dados de uma categoria específica pelo id
   app.patch('/:id', async (request, reply) => {
     const id = Number((request.params as any).id)
-    const categoria = categorias.find(c => c.id === id)
-
-    if (!categoria) {
-      return reply.status(404).send({ mensagem: 'Categoria não encontrada' })
-    }
-
     const { nome } = request.body as { nome?: string }
-    if (nome !== undefined) categoria.nome = nome
-
-    return categoria
+    const atualizada = repositorio.atualizar(id, { nome })
+    if (!atualizada) return reply.status(404).send({ mensagem: 'Categoria não encontrada' })
+    return atualizada
   })
 
-  // Remove uma categoria pelo id
   app.delete('/:id', async (request, reply) => {
     const id = Number((request.params as any).id)
-    categorias = categorias.filter(c => c.id !== id)
-    return { mensagem: 'Categoria deletada' }
+    const deletada = repositorio.deletar(id)
+    if (!deletada) return reply.status(404).send({ mensagem: 'Categoria não encontrada' })
+    return { mensagem: 'Categoria deletada com sucesso' }
   })
 }

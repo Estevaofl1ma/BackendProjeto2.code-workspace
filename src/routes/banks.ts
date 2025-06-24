@@ -1,46 +1,29 @@
 import { FastifyInstance } from 'fastify'
+import { BancoMemoryRepository } from '../repositories/BancoMemoryRepository'
 
-// Interface para Banco
-interface Banco {
-  id: number
-  nome: string
-}
-
-// Lista em memória para armazenar bancos
-let bancos: Banco[] = []
-let proximoIdBanco = 1
+const repositorio = new BancoMemoryRepository()
 
 export default async function rotasBancos(app: FastifyInstance) {
-  // Retorna todos os bancos cadastrados
-  app.get('/', async () => bancos)
+  app.get('/', async () => repositorio.listar())
 
-  // Cria um novo banco e adiciona à lista
   app.post('/', async (request, reply) => {
     const { nome } = request.body as { nome: string }
-    const novoBanco = { id: proximoIdBanco++, nome }
-    bancos.push(novoBanco)
-    return novoBanco
+    const novo = repositorio.criar(nome)
+    return novo
   })
 
-  // Atualiza dados de um banco específico pelo id
   app.patch('/:id', async (request, reply) => {
     const id = Number((request.params as any).id)
-    const banco = bancos.find(b => b.id === id)
-
-    if (!banco) {
-      return reply.status(404).send({ mensagem: 'Banco não encontrado' })
-    }
-
     const { nome } = request.body as { nome?: string }
-    if (nome !== undefined) banco.nome = nome
-
-    return banco
+    const atualizado = repositorio.atualizar(id, { nome })
+    if (!atualizado) return reply.status(404).send({ mensagem: 'Banco não encontrado' })
+    return atualizado
   })
 
-  // Remove um banco pelo id
   app.delete('/:id', async (request, reply) => {
     const id = Number((request.params as any).id)
-    bancos = bancos.filter(b => b.id !== id)
-    return { mensagem: 'Banco deletado' }
+    const deletado = repositorio.deletar(id)
+    if (!deletado) return reply.status(404).send({ mensagem: 'Banco não encontrado' })
+    return { mensagem: 'Banco deletado com sucesso' }
   })
 }
