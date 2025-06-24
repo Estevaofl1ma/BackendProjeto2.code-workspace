@@ -1,7 +1,7 @@
 # Ignorar node_modules
 node_modules/
 
-# Ignorar a saída do TypeScript (se você estiver compilando)
+# Ignorar a saída do TypeScript
 dist/
 
 # Arquivos de log
@@ -12,8 +12,6 @@ yarn-error.log*
 # Configurações locais do VSCode
 .vscode/
 
-# Variáveis de ambiente (caso crie um .env futuramente)
-.env
 
 # Cache do TypeScript
 *.tsbuildinfo
