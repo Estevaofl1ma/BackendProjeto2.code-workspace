@@ -19,10 +19,10 @@ app.get('/', async () => {
 })
 
 // Iniciando o servidor
-app.listen({ port: 3333 }, (err, address) => {
+app.listen({ port: 3333 }, (err) => {
   if (err) {
     console.error('Erro ao iniciar o servidor:', err)
     process.exit(1)
   }
-  console.log(`Servidor rodando em ${address}`)
+  console.log('Servidor rodando em: http://localhost:3333')
 })
