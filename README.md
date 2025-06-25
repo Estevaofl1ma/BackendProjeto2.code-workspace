@@ -89,15 +89,9 @@ Todas as rotas seguem a estrutura REST e armazenam dados **em memória**:
 ## Observações
 
 - Todos os dados são **armazenados temporariamente** (em memória). Ao reiniciar, os dados são perdidos.
-- Este projeto pode ser facilmente adaptado para persistência com banco de dados (PostgreSQL, Mongo, etc).
 
 ---
 
-## Dica: Testar com Insomnia
-
-Você pode usar o [Insomnia](https://insomnia.rest/) para testar as rotas. Se quiser, exporte seus testes e adicione aqui como `insomnia_requests.json`.
-
----
 
 ## Autor
 
