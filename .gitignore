@@ -15,3 +15,5 @@ yarn-error.log*
 
 # Cache do TypeScript
 *.tsbuildinfo
+
+/src/generated/prisma
