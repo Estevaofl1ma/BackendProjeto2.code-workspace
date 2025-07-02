@@ -1,24 +1,29 @@
+// Gera o Prisma Client, que será usado no código para acessar o banco
 generator client {
-  provider = "prisma-client-js"
+  provider = "prisma-client-js" // Define que o cliente será gerado em JavaScript/TypeScript
 }
 
+// Define a conexão com o banco de dados
 datasource db {
-  provider = "sqlite"
-  url      = env("DATABASE_URL")
+  provider = "sqlite"                 // Usamos SQLite como banco de dados local
+  url      = env("DATABASE_URL")     // A string de conexão está no arquivo .env
 }
 
+// Modelo da tabela de Transações
 model Transaction {
-  id     Int    @id @default(autoincrement())
-  titulo String
-  valor  Int
+  id     Int    @id @default(autoincrement())  // ID único da transação, auto-incrementado
+  titulo String                                // Título/descrição da transação (ex: "Compra no mercado")
+  valor  Int                                   // Valor da transação (ex: 100, -50)
 }
 
+// Modelo da tabela de Categorias
 model Category {
-  id   Int    @id @default(autoincrement())
-  nome String
+  id   Int    @id @default(autoincrement())  // ID único da categoria
+  nome String                                // Nome da categoria (ex: "Alimentação", "Transporte")
 }
 
+// Modelo da tabela de Bancos
 model Bank {
-  id   Int    @id @default(autoincrement())
-  nome String
+  id   Int    @id @default(autoincrement())  // ID único do banco
+  nome String                                // Nome do banco (ex: "Nubank", "Caixa")
 }
