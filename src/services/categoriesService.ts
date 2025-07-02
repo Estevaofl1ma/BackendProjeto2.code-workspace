@@ -1,34 +1,28 @@
-// src/services/categoriesService.ts
+import { prisma } from '../lib/prisma'
 
-interface Categoria {
-  id: number
-  nome: string
-}
-
-let categorias: Categoria[] = []
-let proximoId = 1
-
+// Listar todas as categorias
 export const listarCategorias = () => {
-  return categorias
+  return prisma.category.findMany()
 }
 
+// Criar uma nova categoria
 export const criarCategoria = (nome: string) => {
-  const nova = { id: proximoId++, nome }
-  categorias.push(nova)
-  return nova
+  return prisma.category.create({
+    data: { nome },
+  })
 }
 
+// Atualizar uma categoria existente
 export const atualizarCategoria = (id: number, nome?: string) => {
-  const categoria = categorias.find((c) => c.id === id)
-  if (!categoria) return null
-
-  if (nome !== undefined) categoria.nome = nome
-
-  return categoria
+  return prisma.category.update({
+    where: { id },
+    data: { nome },
+  })
 }
 
+// Deletar uma categoria pelo ID
 export const deletarCategoria = (id: number) => {
-  const antes = categorias.length
-  categorias = categorias.filter((c) => c.id !== id)
-  return categorias.length < antes
+  return prisma.category.delete({
+    where: { id },
+  })
 }

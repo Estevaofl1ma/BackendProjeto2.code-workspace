@@ -1,34 +1,28 @@
-// src/services/banksService.ts
+import { prisma } from '../lib/prisma'
 
-interface Banco {
-  id: number
-  nome: string
-}
-
-let bancos: Banco[] = []
-let proximoId = 1
-
+// Listar todos os bancos
 export const listarBancos = () => {
-  return bancos
+  return prisma.bank.findMany()
 }
 
+// Criar um novo banco
 export const criarBanco = (nome: string) => {
-  const novo = { id: proximoId++, nome }
-  bancos.push(novo)
-  return novo
+  return prisma.bank.create({
+    data: { nome },
+  })
 }
 
+// Atualizar um banco existente
 export const atualizarBanco = (id: number, nome?: string) => {
-  const banco = bancos.find((b) => b.id === id)
-  if (!banco) return null
-
-  if (nome !== undefined) banco.nome = nome
-
-  return banco
+  return prisma.bank.update({
+    where: { id },
+    data: { nome },
+  })
 }
 
+// Deletar um banco pelo ID
 export const deletarBanco = (id: number) => {
-  const antes = bancos.length
-  bancos = bancos.filter((b) => b.id !== id)
-  return bancos.length < antes
+  return prisma.bank.delete({
+    where: { id },
+  })
 }
